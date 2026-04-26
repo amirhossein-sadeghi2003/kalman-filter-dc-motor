@@ -4,6 +4,7 @@ import pandas as pd
 from model import simulate_dc_motor
 from simulate import add_measurement_noise
 from kalman_filter import run_speed_kalman_filter
+from baseline_filter import moving_average_filter
 
 
 def compute_rmse(true_values, predicted_values):
@@ -35,19 +36,24 @@ def evaluate_noise_levels(output_path="data/noise_comparison.csv"):
 
     for noise_std in noise_levels:
         measured_speed = add_measurement_noise(true_speed, noise_std=noise_std)
-        estimated_speed = run_speed_kalman_filter(measured_speed, dt=dt)
+        kalman_speed = run_speed_kalman_filter(measured_speed, dt=dt)
+        moving_average_speed = moving_average_filter(measured_speed, window_size=15)
 
         measurement_rmse = compute_rmse(true_speed, measured_speed)
-        kalman_rmse = compute_rmse(true_speed, estimated_speed)
+        moving_average_rmse = compute_rmse(true_speed, moving_average_speed)
+        kalman_rmse = compute_rmse(true_speed, kalman_speed)
 
-        improvement_percent = 100 * (measurement_rmse - kalman_rmse) / measurement_rmse
+        kalman_improvement_percent = 100 * (measurement_rmse - kalman_rmse) / measurement_rmse
+        moving_average_improvement_percent = 100 * (measurement_rmse - moving_average_rmse) / measurement_rmse
 
         rows.append(
             {
                 "noise_std": noise_std,
                 "measurement_rmse": measurement_rmse,
+                "moving_average_rmse": moving_average_rmse,
                 "kalman_rmse": kalman_rmse,
-                "improvement_percent": improvement_percent,
+                "moving_average_improvement_percent": moving_average_improvement_percent,
+                "kalman_improvement_percent": kalman_improvement_percent,
             }
         )
 
