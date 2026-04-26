@@ -30,3 +30,21 @@ def plot_estimation_error(time, true_speed, estimated_speed):
     plt.tight_layout()
     plt.savefig("results/estimation_error.png", dpi=300)
     plt.show()
+
+
+
+def plot_noise_comparison(df):
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(df["noise_std"], df["measurement_rmse"], marker="o", label="Noisy measurement RMSE")
+    plt.plot(df["noise_std"], df["kalman_rmse"], marker="o", label="Kalman estimate RMSE")
+
+    plt.title("RMSE Comparison Across Noise Levels")
+    plt.xlabel("Measurement Noise Standard Deviation")
+    plt.ylabel("RMSE")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("results/noise_comparison.png", dpi=300)
+    plt.show()
+
