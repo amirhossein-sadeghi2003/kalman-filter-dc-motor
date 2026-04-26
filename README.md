@@ -2,21 +2,27 @@
 
 This project simulates a DC motor with noisy speed measurements and uses a Kalman Filter to estimate the true motor speed.
 
+It also compares the Kalman Filter with a simple Moving Average baseline to evaluate how different filtering methods behave under different noise levels.
+
 ## Description
 
-In real systems, sensor measurements are often noisy. This project shows how a Kalman Filter can be used to estimate the hidden or true state of a dynamic system from noisy measurements.
+In real systems, sensor measurements are often noisy. This project shows how filtering methods can be used to estimate the true state of a dynamic system from noisy measurements.
 
-The project uses a simulated DC motor model. The true motor speed is generated from the model, artificial measurement noise is added, and then a Kalman Filter is applied to estimate the speed.
+The project uses a simulated DC motor model. The true motor speed is generated from the model, artificial measurement noise is added, and then two filtering methods are applied:
+
+- Kalman Filter
+- Moving Average Filter
 
 ## Main Idea
 
-The project compares three signals:
+The project compares four signals:
 
 - true motor speed
 - noisy measured speed
-- Kalman Filter estimated speed
+- Moving Average estimate
+- Kalman Filter estimate
 
-The goal is to show that the Kalman Filter can reduce measurement noise and provide a smoother and more accurate estimate of the motor speed.
+The goal is to show how filtering can reduce measurement noise and improve speed estimation.
 
 ## DC Motor Model
 
@@ -54,26 +60,32 @@ The simulation generates:
 
 Gaussian noise is added to the true speed signal to simulate noisy sensor measurements.
 
-The noisy speed measurement is then used as the input to the Kalman Filter.
+The noisy speed measurement is used as the input to both filters.
 
 ### 3. Kalman Filter Estimation
 
-A Kalman Filter estimates the motor speed using the noisy speed measurements.
+A Kalman Filter estimates the motor speed using noisy speed measurements.
 
 The filter uses a simple state model with:
 
 - speed
 - acceleration
 
-### 4. Error Analysis
+### 4. Moving Average Baseline
 
-The project compares the raw noisy measurement error with the Kalman Filter estimation error.
+A Moving Average Filter is also applied as a simple baseline method.
+
+This baseline helps compare the Kalman Filter against a basic smoothing technique.
+
+### 5. Error Analysis
+
+The project compares the raw noisy measurement error, Moving Average error, and Kalman Filter error.
 
 The error is evaluated using RMSE.
 
-### 5. Noise Level Comparison
+### 6. Noise Level Comparison
 
-The project also evaluates the Kalman Filter under different noise levels.
+The project evaluates filtering performance under different measurement noise levels.
 
 The tested noise standard deviations are:
 
@@ -84,18 +96,25 @@ The tested noise standard deviations are:
 
 ## Results
 
-The Kalman Filter reduces the estimation error compared to raw noisy measurements.
+The Kalman Filter and Moving Average Filter both reduce the estimation error compared to raw noisy measurements.
 
 Noise comparison results:
 
-| Noise STD | Measurement RMSE | Kalman RMSE | Improvement |
-|---|---:|---:|---:|
-| 0.2 | 0.196 | 0.090 | 54.03% |
-| 0.5 | 0.489 | 0.190 | 61.21% |
-| 1.0 | 1.015 | 0.362 | 64.35% |
-| 1.5 | 1.475 | 0.461 | 68.73% |
+| Noise STD | Measurement RMSE | Moving Average RMSE | Kalman RMSE | Moving Average Improvement | Kalman Improvement |
+|---|---:|---:|---:|---:|---:|
+| 0.2 | 0.196 | 0.132 | 0.090 | 32.75% | 54.03% |
+| 0.5 | 0.489 | 0.201 | 0.190 | 58.94% | 61.21% |
+| 1.0 | 1.015 | 0.277 | 0.362 | 72.70% | 64.35% |
+| 1.5 | 1.475 | 0.360 | 0.461 | 75.62% | 68.73% |
 
-These results show that the Kalman Filter becomes especially useful when measurement noise increases.
+The results show that:
+
+- both filters improve estimation compared to raw noisy measurements
+- the Kalman Filter performs better for lower and moderate noise levels in this setup
+- the Moving Average baseline performs better for higher noise levels with the current Kalman tuning
+- Kalman Filter performance depends on proper tuning of process noise and measurement noise parameters
+
+This makes the project a small but useful comparison study of state estimation and signal filtering for a dynamic system.
 
 ## Output Figures
 
@@ -104,6 +123,8 @@ The project generates the following result figures:
 - `results/speed_estimation.png`
 - `results/estimation_error.png`
 - `results/noise_comparison.png`
+- `results/filter_comparison.png`
+- `results/filter_rmse_comparison.png`
 
 ## Main Files
 
@@ -112,6 +133,7 @@ Important files in this project:
 - `src/model.py`
 - `src/simulate.py`
 - `src/kalman_filter.py`
+- `src/baseline_filter.py`
 - `src/evaluate.py`
 - `src/plots.py`
 - `src/main.py`
@@ -136,7 +158,7 @@ To run only the noise-level evaluation:
 
 ## Project Goal
 
-The goal of this project is to connect dynamic system modeling, noisy sensor measurements, and state estimation.
+The goal of this project is to connect dynamic system modeling, noisy sensor measurements, state estimation, and baseline filtering.
 
 This project is related to:
 
@@ -151,8 +173,8 @@ This project is related to:
 
 Possible next steps:
 
+- tune Kalman Filter parameters for different noise levels
 - estimate both speed and position
-- compare different Kalman Filter parameters
+- compare with exponential moving average filtering
 - add Extended Kalman Filter for nonlinear models
-- compare Kalman estimates with moving-average filtering
 - apply the method to real sensor data
