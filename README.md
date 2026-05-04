@@ -1,17 +1,57 @@
 # Kalman Filter DC Motor
 
-This project simulates a DC motor with noisy speed measurements and uses a Kalman Filter to estimate the true motor speed.
+State estimation project for a simulated DC motor using noisy speed measurements, a Kalman Filter estimator, and a Moving Average baseline.
 
-It also compares the Kalman Filter with a simple Moving Average baseline to evaluate how different filtering methods behave under different noise levels.
+This project demonstrates a small but meaningful workflow at the intersection of:
 
-## Description
+- dynamic systems
+- sensor noise modeling
+- state estimation
+- filtering
+- control-oriented system analysis
+- intelligent physical systems
 
-In real systems, sensor measurements are often noisy. This project shows how filtering methods can be used to estimate the true state of a dynamic system from noisy measurements.
+The main goal is to show how noisy measurements from a dynamic system can be filtered to recover a better estimate of the true system state.
 
-The project uses a simulated DC motor model. The true motor speed is generated from the model, artificial measurement noise is added, and then two filtering methods are applied:
+---
 
-- Kalman Filter
-- Moving Average Filter
+## Project Overview
+
+In many real engineering systems, sensor readings are noisy and cannot be used directly without filtering or estimation. This project uses a simulated DC motor to demonstrate that problem in a clean and interpretable way.
+
+The workflow is:
+
+`DC motor simulation → noisy speed measurement → filtering/estimation → RMSE comparison → visualization`
+
+The project compares two filtering approaches:
+
+- **Kalman Filter**
+- **Moving Average Filter**
+
+The Kalman Filter is used as the main estimation method, while the Moving Average Filter is included as a simple baseline.
+
+---
+
+## Why This Project Matters
+
+This project is useful because it connects several important engineering ideas in one compact example:
+
+- modeling a physical dynamic system
+- simulating noisy sensor measurements
+- estimating hidden or corrupted states
+- comparing filtering methods quantitatively
+- building intuition for estimation in robotics, control, and embedded sensing systems
+
+This makes the project relevant to:
+
+- control systems
+- state estimation
+- robotics
+- embedded systems
+- sensor processing
+- intelligent physical systems
+
+---
 
 ## Main Idea
 
@@ -22,19 +62,21 @@ The project compares four signals:
 - Moving Average estimate
 - Kalman Filter estimate
 
-The goal is to show how filtering can reduce measurement noise and improve speed estimation.
+The purpose is to study how filtering improves measurement quality and to compare a model-based estimator with a simple smoothing baseline.
+
+---
 
 ## DC Motor Model
 
-The DC motor model includes:
+The DC motor model includes the following system variables:
 
 - armature current
 - angular velocity
 - angular position
 
-The simplified dynamics are based on the electrical and mechanical equations of a DC motor.
+The simplified dynamics are based on standard electrical and mechanical equations of a DC motor.
 
-The system uses parameters such as:
+Model parameters include:
 
 - resistance
 - inductance
@@ -44,13 +86,17 @@ The system uses parameters such as:
 - friction
 - input voltage
 
+The motor is simulated under a step voltage input, which produces the true response signals used later in the estimation pipeline.
+
+---
+
 ## Project Pipeline
 
 ### 1. DC Motor Simulation
 
-The motor model is simulated using a step voltage input.
+The motor model is simulated to generate the true system response.
 
-The simulation generates:
+Generated signals:
 
 - current
 - true speed
@@ -58,47 +104,57 @@ The simulation generates:
 
 ### 2. Noisy Measurement Generation
 
-Gaussian noise is added to the true speed signal to simulate noisy sensor measurements.
+Gaussian noise is added to the true motor speed signal to simulate noisy sensor measurements.
 
-The noisy speed measurement is used as the input to both filters.
+This produces a more realistic observed signal that would resemble noisy encoder or sensor readings in practice.
 
 ### 3. Kalman Filter Estimation
 
-A Kalman Filter estimates the motor speed using noisy speed measurements.
+A Kalman Filter is used to estimate motor speed from noisy measurements.
 
 The filter uses a simple state model with:
 
 - speed
 - acceleration
 
+This estimator is the main filtering method studied in the project.
+
 ### 4. Moving Average Baseline
 
-A Moving Average Filter is also applied as a simple baseline method.
+A Moving Average Filter is applied as a baseline smoothing method.
 
-This baseline helps compare the Kalman Filter against a basic smoothing technique.
+This provides a simple reference point for comparison with the Kalman Filter.
 
 ### 5. Error Analysis
 
-The project compares the raw noisy measurement error, Moving Average error, and Kalman Filter error.
+The project compares estimation quality using RMSE.
 
-The error is evaluated using RMSE.
+Compared error sources:
 
-### 6. Noise Level Comparison
+- raw noisy measurement error
+- Moving Average estimation error
+- Kalman Filter estimation error
 
-The project evaluates filtering performance under different measurement noise levels.
+### 6. Noise-Level Comparison
 
-The tested noise standard deviations are:
+The filtering methods are evaluated under several measurement noise levels.
+
+Tested noise standard deviations:
 
 - `0.2`
 - `0.5`
 - `1.0`
 - `1.5`
 
-## Results
+This helps show how the filtering methods behave as sensor noise becomes stronger.
 
-The Kalman Filter and Moving Average Filter both reduce the estimation error compared to raw noisy measurements.
+---
 
-Noise comparison results:
+## Key Results
+
+Both the Kalman Filter and the Moving Average Filter improve estimation quality compared to the raw noisy measurements.
+
+Noise comparison summary:
 
 | Noise STD | Measurement RMSE | Moving Average RMSE | Kalman RMSE | Moving Average Improvement | Kalman Improvement |
 |---|---:|---:|---:|---:|---:|
@@ -107,46 +163,115 @@ Noise comparison results:
 | 1.0 | 1.015 | 0.277 | 0.362 | 72.70% | 64.35% |
 | 1.5 | 1.475 | 0.360 | 0.461 | 75.62% | 68.73% |
 
-The results show that:
+Key observations:
 
-- both filters improve estimation compared to raw noisy measurements
-- the Kalman Filter performs better for lower and moderate noise levels in this setup
-- the Moving Average baseline performs better for higher noise levels with the current Kalman tuning
-- Kalman Filter performance depends on proper tuning of process noise and measurement noise parameters
+- both filters reduce estimation error relative to the raw noisy measurements
+- the Kalman Filter performs better for lower and moderate noise levels in the current setup
+- the Moving Average baseline performs better at higher noise levels with the current Kalman tuning
+- Kalman Filter performance depends strongly on appropriate tuning of process noise and measurement noise parameters
 
-This makes the project a small but useful comparison study of state estimation and signal filtering for a dynamic system.
+This makes the project a useful small-scale study of model-based estimation versus simple signal smoothing.
+
+---
 
 ## Output Figures
 
-The project generates the following result figures:
+The project generates several result figures to visualize estimation quality and filtering performance.
 
-- `results/speed_estimation.png`
-- `results/estimation_error.png`
-- `results/noise_comparison.png`
-- `results/filter_comparison.png`
-- `results/filter_rmse_comparison.png`
+### Speed Estimation
+
+This figure compares the true DC motor speed, noisy measurement, Moving Average estimate, and Kalman Filter estimate.
+
+![Speed Estimation](results/speed_estimation.png)
+
+### Estimation Error
+
+This figure shows the estimation error of the filtering methods over time.
+
+![Estimation Error](results/estimation_error.png)
+
+### Filter Comparison
+
+This figure compares filtering behavior between the Kalman Filter and the Moving Average baseline.
+
+![Filter Comparison](results/filter_comparison.png)
+
+### Noise-Level RMSE Comparison
+
+This figure compares RMSE values across different measurement noise levels.
+
+![Noise-Level RMSE Comparison](results/filter_rmse_comparison.png)
+
+### Noise Comparison
+
+This figure summarizes how measurement noise level affects filtering performance.
+
+![Noise Comparison](results/noise_comparison.png)
+
+---
+
+## Repository Structure
+
+```text
+kalman-filter-dc-motor/
+├── data/
+│   ├── dc_motor_noisy_data.csv
+│   └── noise_comparison.csv
+├── results/
+│   ├── estimation_error.png
+│   ├── filter_comparison.png
+│   ├── filter_rmse_comparison.png
+│   ├── noise_comparison.png
+│   └── speed_estimation.png
+├── src/
+│   ├── baseline_filter.py
+│   ├── evaluate.py
+│   ├── kalman_filter.py
+│   ├── main.py
+│   ├── model.py
+│   ├── plots.py
+│   └── simulate.py
+├── requirements.txt
+└── README.md
+```
+
+---
 
 ## Main Files
 
 Important files in this project:
 
-- `src/model.py`
-- `src/simulate.py`
-- `src/kalman_filter.py`
-- `src/baseline_filter.py`
-- `src/evaluate.py`
-- `src/plots.py`
-- `src/main.py`
+- `src/model.py` — DC motor dynamics
+- `src/simulate.py` — simulation of the motor response
+- `src/kalman_filter.py` — Kalman Filter implementation
+- `src/baseline_filter.py` — Moving Average baseline
+- `src/evaluate.py` — performance comparison across noise levels
+- `src/plots.py` — result visualization
+- `src/main.py` — main project runner
+
+---
 
 ## How to Run
 
-From the project root, activate the virtual environment and run:
+Create and activate a virtual environment:
+
+`python3 -m venv venv`
+
+`source venv/bin/activate`
+
+Install dependencies:
+
+`pip install -r requirements.txt`
+
+Run the main project pipeline:
 
 `python src/main.py`
 
-To run only the noise-level evaluation:
+Run only the noise-level evaluation:
 
 `python src/evaluate.py`
+
+---
 
 ## Main Libraries
 
@@ -156,18 +281,35 @@ To run only the noise-level evaluation:
 - `pandas`
 - `filterpy`
 
+---
+
 ## Project Goal
 
-The goal of this project is to connect dynamic system modeling, noisy sensor measurements, state estimation, and baseline filtering.
+The goal of this project is to connect:
 
-This project is related to:
-
-- control systems
+- dynamic system modeling
+- noisy sensor measurements
 - state estimation
-- sensor noise filtering
-- robotics
-- embedded systems
-- intelligent physical systems
+- filtering
+- quantitative error analysis
+
+It is designed as a small portfolio project showing how estimation methods can improve measurement quality in dynamic systems.
+
+---
+
+## Limitations
+
+This project has several limitations:
+
+- the DC motor system is simulated rather than measured from real hardware
+- the Kalman Filter uses a simplified state model
+- the filter is tuned for this specific setup and may not be optimal for all noise levels
+- only one baseline method is included
+- the project focuses on speed estimation, not full state estimation or control
+
+These limitations are acceptable for a compact educational project, but they also suggest clear directions for extension.
+
+---
 
 ## Future Work
 
@@ -175,6 +317,23 @@ Possible next steps:
 
 - tune Kalman Filter parameters for different noise levels
 - estimate both speed and position
-- compare with exponential moving average filtering
-- add Extended Kalman Filter for nonlinear models
-- apply the method to real sensor data
+- compare against exponential moving average filtering
+- test additional baselines
+- extend the model toward state-space control analysis
+- add an Extended Kalman Filter for nonlinear cases
+- apply the method to real sensor data from a physical DC motor setup
+
+---
+
+## Summary
+
+This project demonstrates a clean and interpretable estimation pipeline for a dynamic system.
+
+It shows that:
+
+- noisy measurements can be improved through filtering
+- a Kalman Filter can outperform raw measurements and simple baselines under many conditions
+- estimation quality depends on model assumptions and tuning
+- dynamic systems, sensing, and data processing can be combined into a compact engineering workflow
+
+Overall, this project serves as a portfolio-friendly example of state estimation for intelligent physical systems.
