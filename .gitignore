@@ -8,3 +8,5 @@ __pycache__/
 *.swo
 *.swn
 data/*.csv
+
+.venv/
